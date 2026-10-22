@@ -76,6 +76,9 @@ setup_paths.m   adds all folders to the MATLAB path
 | `fig_6_simulink_validation.png` | Simulink vs linear model |
 | `fig_7_simulink_model_2area.png` | Simulink model, top level |
 | `fig_8_simulink_area1_detail.png` | Simulink model, Area 1 |
+| `fig_9_df1_comparison.png` | compact Δf1 comparison used in the report |
+
+Figures 7-9 also exist as vector `.pdf` files.
 
 ## Running
 

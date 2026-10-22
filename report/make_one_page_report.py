@@ -1,18 +1,25 @@
-"""Build report/LFC_results_one_page.pdf from the figures in results/figures.
+"""Build report/LFC_results_one_page.pdf.
 
-Run from the repository root:  python3 report/make_one_page_report.py
+Text and tables are drawn with matplotlib; the Simulink diagrams and the
+comparison plot are placed as vector PDF pages (PyMuPDF), so they stay sharp
+at any zoom. Run from the repository root:
+
+    python3 report/make_one_page_report.py
 """
+import os
 import matplotlib
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt
-import matplotlib.image as mpimg
+import fitz  # PyMuPDF
 
 W, H = 8.27, 11.69          # A4, inches
 FIG = "results/figures/"
 OUT = "report/LFC_results_one_page.pdf"
+BASE = "report/_base.pdf"
 INK, GREY = "#111111", "#555555"
 
 fig = plt.figure(figsize=(W, H), facecolor="white")
+placements = []             # (pdf path, target rect in points, clip rect or None)
 
 
 def box(x, y, w, h):
@@ -20,16 +27,29 @@ def box(x, y, w, h):
     return fig.add_axes([x / W, y / H, w / W, h / H])
 
 
-def image(path, x, y, w=None, h=None):
-    img = mpimg.imread(path)
-    ratio = img.shape[1] / img.shape[0]
+def content_bbox(page):
+    """Bounding box of the drawn content, ignoring a full-page background rectangle."""
+    r = fitz.Rect()
+    for d in page.get_drawings():
+        if d["rect"].width > 0.9 * page.rect.width and d["rect"].height > 0.9 * page.rect.height:
+            continue
+        r |= d["rect"]
+    for b in page.get_text("blocks"):
+        r |= fitz.Rect(b[:4])
+    return r if not r.is_empty else page.rect
+
+
+def vector(path, x, y, w=None, h=None, crop=True):
+    """Place page 1 of a PDF with its lower-left corner at (x, y) inches."""
+    page = fitz.open(path)[0]
+    clip = content_bbox(page) if crop else page.rect
+    ratio = clip.width / clip.height
     if w is None:
         w = h * ratio
     else:
         h = w / ratio
-    ax = box(x, y, w, h)
-    ax.imshow(img)
-    ax.axis("off")
+    rect = fitz.Rect(x * 72, (H - y - h) * 72, (x + w) * 72, (H - y) * 72)
+    placements.append((path, rect, clip))
     return w, h
 
 
@@ -52,7 +72,6 @@ def table(x, y, w, h, rows, header, widths, size=7.6):
             cell.set_text_props(fontweight="bold", color=INK)
         else:
             cell.set_text_props(color=INK)
-    return t
 
 
 # ---- title -----------------------------------------------------------------
@@ -61,8 +80,8 @@ text(0.5, 11.05, "Step load of 0.05 pu in Area 1 at t = 0   |   linear state-spa
      8.5, color=GREY)
 
 # ---- top row: Simulink overview (left), parameters + models (right) --------
-image(FIG + "fig_7_simulink_model_2area.png", 0.5, 7.55, h=3.3)
-text(0.5, 7.5, "Simulink model (top level, two areas + tie-line)", 7, color=GREY)
+vector(FIG + "fig_7_simulink_model_2area.pdf", 0.5, 7.6, h=3.3)
+text(0.5, 7.55, "Simulink model, top level (two areas and tie-line)", 7, color=GREY)
 
 text(3.55, 10.85, "Parameters (identical areas)", 9, "bold")
 params = [["Tg", "0.08 s"], ["Tt", "0.3 s"], ["Tp", "20 s"], ["Kp", "120 Hz/pu"],
@@ -82,12 +101,12 @@ text(3.55, 8.72,
      8)
 
 # ---- Simulink detail --------------------------------------------------------
-w, h = image(FIG + "fig_8_simulink_area1_detail.png", 0.5, 4.45, w=7.27)
-text(0.5, 4.4, "Simulink model, Area 1 (Area 2 identical): load, power system, ACE, PID, governor, turbine",
+vector(FIG + "fig_8_simulink_area1_detail.pdf", 0.5, 4.5, w=7.27)
+text(0.5, 4.45, "Simulink model, Area 1 (Area 2 identical): load, power system, ACE, PID, governor, turbine",
      7, color=GREY)
 
 # ---- results table ----------------------------------------------------------
-text(0.5, 4.15, "Results", 9, "bold")
+text(0.5, 4.2, "Results", 9, "bold")
 rows = [
     ["Droop only", "0 / 0 / 0", "713.25", "-0.1117", "8.75", "-0.0588", "No"],
     ["Integral", "0 / 0.5 / 0", "0.827", "-0.1089", "13.5", "0", "No"],
@@ -96,12 +115,12 @@ rows = [
 ]
 header = ["Controller", "KP / KI / KD", "ITAE", "min Δf1 (Hz)", "ts Δf1 (s)",
           "final Δf1 (Hz)", "Δf1 ≥ -0.10 Hz"]
-table(0.5, 2.9, 7.27, 1.05, rows, header, [0.17, 0.17, 0.11, 0.15, 0.13, 0.14, 0.13], size=7.8)
+table(0.5, 2.95, 7.27, 1.05, rows, header, [0.17, 0.17, 0.11, 0.15, 0.13, 0.14, 0.13], size=7.8)
 
 # ---- comparison figure + findings ------------------------------------------
-image(FIG + "fig_5_conventional_controllers.png", 0.5, 0.45, h=2.3)
-text(4.1, 2.75, "Findings", 9, "bold")
-text(4.1, 2.5,
+vector(FIG + "fig_9_df1_comparison.pdf", 0.5, 0.5, h=2.3, crop=False)
+text(4.3, 2.65, "Findings", 9, "bold")
+text(4.3, 2.4,
      "• Droop alone leaves Δf = -0.0588 Hz\n"
      "   (theory -ΔPL/2β = -0.0588).\n\n"
      "• Integral action removes the error;\n"
@@ -112,5 +131,16 @@ text(4.1, 2.5,
      "   inside the -0.10 Hz limit.",
      8.2)
 
-fig.savefig(OUT, facecolor="white")
+fig.savefig(BASE, facecolor="white")
+plt.close(fig)
+
+# ---- overlay the vector pages ------------------------------------------------
+doc = fitz.open(BASE)
+page = doc[0]
+for path, rect, clip in placements:
+    src = fitz.open(path)
+    page.show_pdf_page(rect, src, 0, clip=clip)
+doc.save(OUT, deflate=True)
+doc.close()
+os.remove(BASE)
 print("saved", OUT)
