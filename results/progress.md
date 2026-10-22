@@ -5,3 +5,4 @@
 - [x] Step 0.3 (redo, plan v1.1) — Reference benchmark parameters — 2026-10-22 — beta = 0.4250, 2*pi*T12 = 0.5450
 - [x] Step 0.4 — General N-area plant builder — 2026-10-22 — largest pole real part -0.4973
 - [x] Step 0.5-0.7 — Closed loop, metrics, baseline — 2026-10-22 — droop ITAE 713.25, final df1 -0.05882
+- [x] Step 1.1 — ACE baseline — 2026-10-22 — final ACE1 -0.05000
