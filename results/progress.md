@@ -10,3 +10,4 @@
 - [x] Step 1.3 — KI sweep and stability limit — 2026-10-22 — KI limit 1.3847
 - [x] Step 1.4 — Droop vs integral figure — 2026-10-22 — final df1 -0.05882 -> ~0
 - [x] Step 3.1 — Manual PID tuning — 2026-10-22 — [0 0.5 0.1], ITAE 0.4817
+- [x] Step 3.2 — pidtune reference — 2026-10-22 — Kp=0 Ki=0.8494 Kd=0 N=100, ITAE 1.8817, min df1 -0.1072, ts 22.0
