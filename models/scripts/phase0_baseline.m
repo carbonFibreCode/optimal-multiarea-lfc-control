@@ -13,5 +13,5 @@ fprintf('final ACE1 = %.5f\n', res.ace(end,1));
 fprintf('min df1 = %.4f, min df2 = %.4f\n', m.min_df1, m.min_df2);
 fprintf('ITAE = %.2f, ts_df1 = %.1f s, CEA band ok = %d\n', m.ITAE, m.ts_df1, m.cea_ok);
 log_result('0.7','Droop','2A step 0.05',zeros(2,3),m);
-plot_compare({res},{'Droop'},p,'Phase 0: droop-only baseline','phase0_baseline.png');
+plot_compare({res},{'Droop'},p,'Droop-only response to a 0.05 pu load step in Area 1','fig_1_droop_only_baseline.png');
 save(fullfile('results','data','phase0_baseline.mat'),'res','m','p');

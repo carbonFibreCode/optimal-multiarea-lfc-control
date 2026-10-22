@@ -14,9 +14,12 @@ for k = 1:3
         plot(res.t, y, 'LineWidth', 1.6, 'Color', plot_style(names{r}));
     end
     ylabel(labels{k});
+    xlim([0 res.t(end)]);
     if k == 3, xlabel('Time (s)'); end
-    if k == 1, legend(names,'Location','southeast'); title(titleText); end
+    if k == 1, legend(names,'Location','southeast'); end
 end
+format_figure(fig);
+sgtitle(titleText, 'Color', 'k', 'FontWeight', 'bold', 'FontSize', 13);
 root = fileparts(fileparts(fileparts(mfilename('fullpath'))));
-exportgraphics(fig, fullfile(root,'results','figures',fileName), 'Resolution', 200);
+exportgraphics(fig, fullfile(root,'results','figures',fileName), 'Resolution', 200, 'BackgroundColor', 'white');
 end
