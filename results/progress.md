@@ -8,3 +8,4 @@
 - [x] Step 1.1 — ACE baseline — 2026-10-22 — final ACE1 -0.05000
 - [x] Step 1.2 — Integral control KI=0.5 — 2026-10-22 — ITAE 0.827
 - [x] Step 1.3 — KI sweep and stability limit — 2026-10-22 — KI limit 1.3847
+- [x] Step 1.4 — Droop vs integral figure — 2026-10-22 — final df1 -0.05882 -> ~0
