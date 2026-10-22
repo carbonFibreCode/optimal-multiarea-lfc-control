@@ -13,3 +13,4 @@
 - [x] Step 3.2 — pidtune reference — 2026-10-22 — Kp=0 Ki=0.8494 Kd=0 N=100, ITAE 1.8817, min df1 -0.1072, ts 22.0
 - [x] Step 3.3 — Conventional controllers figure — 2026-10-22 — only Droop stays below 0
 - [x] Step 2.1-2.3 — Simulink model and validation — 2026-10-22 — max df error vs linear 1e-7
+- [x] Step 2.4 — Simulink diagrams exported — 2026-10-22 — fig_7, fig_8
