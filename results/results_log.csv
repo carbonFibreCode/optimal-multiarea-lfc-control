@@ -1,0 +1,2 @@
+step,controller,testcase,gains,ITAE,IAE,ISE,ITSE,ts_df1,min_df1,min_df2,maxabs_ptie1,final_df1,max_u1
+"0.7","Droop","2A step 0.05","0.0000 0.0000 0.0000 0.0000 0.0000 0.0000",713.246,14.2526,0.758238,37.7319,8.750,-0.111745,-0.089633,0.031823,-5.882e-02,0.000000
